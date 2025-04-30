@@ -2,6 +2,9 @@ package com.pluralsight;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Scanner;
 
 public class BankAccountLedgerApp {
@@ -59,14 +62,38 @@ public class BankAccountLedgerApp {
     }
     static void addDeposit() {
         try {
+            //gets current date and time. Time is shortened to not have nanoseconds using truncated to method
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+            //file writer to write to file
+            FileWriter writer = new FileWriter("src/main/resources/transacpract.csv" , true);
+            BufferedWriter bufWriter = new BufferedWriter(writer);
 
+            //gets user input and splits it to add it to the file
+            System.out.println("To make deposit please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20) ");
+            String input = scan.nextLine();
+            String[] inputLine = input.split(",");
+            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
+            bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     static void makePayment() {
         try {
+            //gets current date and time. Time is shortened to not have nanoseconds using truncated to method
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+            //file writer to write to file
+            FileWriter writer = new FileWriter("src/main/resources/transacpract.csv", true);
+            BufferedWriter bufWriter = new BufferedWriter(writer);
 
+            //gets user input and splits it to add it to the file
+            System.out.println("To make payment please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20.00) ");
+            String input = scan.nextLine();
+            String[] inputLine = input.split(",");
+            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + "-" + inputLine[2] + "\n");
+            bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
