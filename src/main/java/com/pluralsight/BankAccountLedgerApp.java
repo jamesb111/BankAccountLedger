@@ -2,6 +2,8 @@ package com.pluralsight;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -27,12 +29,29 @@ public class BankAccountLedgerApp {
             //boolean that will run loop
             boolean appRunning = true;
 
-            //file writer to write to file
-            FileWriter writer = new FileWriter("src/main/resources/transacpract.csv");
-            BufferedWriter bufWriter = new BufferedWriter(writer);
+            boolean fileExists = Files.exists(Path.of("src/main/resources/transacpract.csv"));
 
             //writes the header for the file
-            bufWriter.write("date|time|description|vendor|amount");
+            if(!fileExists) {
+                //file writer to write to file
+                FileWriter writer = new FileWriter("src/main/resources/transacpract.csv", true);
+                BufferedWriter bufWriter = new BufferedWriter(writer);
+
+                //Dummy data used to ensure all features are working properly
+                bufWriter.write("date|time|description|vendor|amount \n");
+                bufWriter.write("2024-08-20|14:35:20|Bought textbooks|University Store|-210.80 \n");
+                bufWriter.write("2024-09-10|10:10:10|Part-time Salary|Coffee Shop|700.00 \n");
+                bufWriter.write("2024-10-22|18:20:40|Car Repair|AutoFix Center|-340.90 \n");
+                bufWriter.write("2024-11-05|19:50:50|Sold Bicycle|Facebook Marketplace|180.00 \n");
+                bufWriter.write("2024-12-24|08:30:30|Holiday Gift Shopping|Amazon|-215.67 \n");
+                bufWriter.write("2025-01-10|13:13:13|New Year Bonus|Company XYZ|500.00 \n");
+                bufWriter.write("2025-02-14|20:00:00|Valentine's Dinner|Fancy Steakhouse|-150.00 \n");
+                bufWriter.write("2025-03-01|07:50:00|Monthly Subscription|Spotify|-9.99 \n");
+                bufWriter.write("2025-03-25|12:12:12|Sold Artwork|Local Gallery|350.00 \n");
+                bufWriter.write("2025-04-28|15:16:35|Bought sandwich|Walmart|-10.00 \n");
+
+                bufWriter.close();
+            }
 
             //loops through home screen options
             while(appRunning) {
