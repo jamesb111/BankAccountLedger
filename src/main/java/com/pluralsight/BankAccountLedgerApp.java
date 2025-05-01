@@ -1,5 +1,7 @@
 package com.pluralsight;
 
+import com.pluralsight.Transaction;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -8,7 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -56,6 +60,7 @@ public class BankAccountLedgerApp {
                 bufWriter.close();
             }
 
+
             //loops through home screen options
             while(appRunning) {
                 System.out.println("Welcome to the Ace Account Home Screen! Select a letter from our list of options \n" +
@@ -95,7 +100,7 @@ public class BankAccountLedgerApp {
             System.out.println("To make deposit please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20) ");
             String input = scan.nextLine();
             String[] inputLine = input.split(",");
-            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
+            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + inputLine[2] + "\n");
             bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -121,14 +126,15 @@ public class BankAccountLedgerApp {
         }
     }
     static void ledgerView() {
-        try {//reads lines from file
+        try {
+            //reads lines from file
             FileReader fileReader = new FileReader("src/main/resources/transacpract.csv");
             BufferedReader bufReader = new BufferedReader(fileReader);
             //reads and throws away first line of file which is the header
             bufReader.readLine();
 
             //reads all file lines and adds them to list
-            ArrayList<Transaction> entryList = new ArrayList<Transaction>();
+            ArrayList<Transaction> entryList = new ArrayList<>();
             String input;
             while((input = bufReader.readLine()) != null) {
                 String[] transacParts = input.split("\\|");
@@ -163,10 +169,30 @@ public class BankAccountLedgerApp {
                         }
                     }
                 } else if(ledgerChoice.equalsIgnoreCase("p")) {
-
+                    for(int i = entryList.size() - 1; i >= 0; i--) {
+                        Transaction t = entryList.get(i);
+                        // makes sure number is less than zero
+                        if(t.getAmount() < 0) {
+                            System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                        }
+                    }
                 } else if(ledgerChoice.equalsIgnoreCase("r")) {
+                    //get current time
+                    LocalDate current = LocalDate.now();
+
+                    //get first of month
+                    LocalDate firstOfMonth = current.withDayOfMonth(1);
+
+                    // year month class to use atEndOfMonth method in loop later to get previous month last day
+                    YearMonth monthForMethod = YearMonth.of(firstOfMonth.getYear(), firstOfMonth.getMonth());
+
+                    //Temporal adjusters that will get first day of year and last day of year
+                    LocalDate firstDayOfYear = current.with(TemporalAdjusters.firstDayOfYear());
+                    LocalDate lastDayOfYear = current.with(TemporalAdjusters.lastDayOfYear());
+
                     //loops through report options
                     boolean onReports = true;
+                    label:
                     while(onReports) {
                         System.out.println("Report page. Click one of the numbers to select one of our options. \n" +
                                 "1) Month To Date \n" +
@@ -176,18 +202,67 @@ public class BankAccountLedgerApp {
                                 "5) Search by Vendor \n" +
                                 "0) Back");
                         String reportsChoice = scan.nextLine();
-                        if(reportsChoice.equals("1")) {
-
-                        } else if(reportsChoice.equals("2")) {
-
-                        } else if(reportsChoice.equals("3")) {
-
-                        } else if(reportsChoice.equals("4")) {
-
-                        } else if(reportsChoice.equals("5")) {
-
-                        } else if(reportsChoice.equals("0")) {
-                            break;
+                        switch (reportsChoice) {
+                            case "1": //month to date
+                                System.out.println("Month to date--------------------------");
+                                for (int i = entryList.size() - 1; i >= 0; i--) {
+                                    Transaction t = entryList.get(i);
+                                    //boolean that checks if entry is within first day of month till current time
+                                    boolean monthToDate = (t.getDate().isAfter(firstOfMonth) || t.getDate().isEqual(firstOfMonth))  && (t.getDate().isBefore(LocalDate.now()) || t.getDate().isEqual(LocalDate.now()) );
+                                    if (monthToDate) {
+                                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                                    }
+                                }
+                                break;
+                            case "2": // previous month
+                                System.out.println("Previous month--------------------------");
+                                for (int i = entryList.size() - 1; i >= 0; i--) {
+                                    Transaction t = entryList.get(i);
+                                    //boolean that checks if entry is within first and last day of previous month
+                                    boolean previousMonth = (t.getDate().isAfter(firstOfMonth.minusMonths(1)) || t.getDate().isEqual(firstOfMonth.minusMonths(1))) && (t.getDate().isBefore(monthForMethod.atEndOfMonth().minusMonths(1) ) || t.getDate().isEqual(monthForMethod.atEndOfMonth().minusMonths(1)));
+                                    if (previousMonth) {
+                                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                                    }
+                                }
+                                break;
+                            case "3": //year to date
+                                System.out.println("Year to date--------------------------");
+                                for (int i = entryList.size() - 1; i >= 0; i--) {
+                                    Transaction t = entryList.get(i);
+                                    // boolean checks if entry is within year to current time
+                                    boolean yearToDate = (t.getDate().isAfter(firstDayOfYear) || t.getDate().isEqual(firstDayOfYear)) && (t.getDate().isBefore(LocalDate.now()) || t.getDate().isEqual(LocalDate.now()));
+                                    if (yearToDate) {
+                                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                                    }
+                                }
+                                break;
+                            case "4": //previous year
+                                System.out.println("Previous month--------------------------");
+                                for (int i = entryList.size() - 1; i >= 0; i--) {
+                                    Transaction t = entryList.get(i);
+                                    // boolean that checks if entry is within first and last day of previous year
+                                    boolean previousYear = (t.getDate().isAfter(firstDayOfYear.minusYears(1)) || t.getDate().isEqual(firstDayOfYear.minusYears(1)))&& (t.getDate().isBefore(lastDayOfYear.minusYears(1)) || t.getDate().isEqual(lastDayOfYear.minusYears(1)));
+                                    if (t.getAmount() < 0) {
+                                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                                    }
+                                }
+                                break;
+                            case "5": //search by vendor
+                                System.out.println("Search by Vendor--------------------------");
+                                System.out.println("Enter vendor name to search by vendor.");
+                                String vendorName = scan.nextLine();
+                                for (int i = entryList.size() - 1; i >= 0; i--) {
+                                    Transaction t = entryList.get(i);
+                                    // boolean that checks if vendor name is inside transaction.
+                                    boolean vendorMatch = t.getVendor().toLowerCase().contains(vendorName.toLowerCase());
+                                    if (vendorMatch) {
+                                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                                    }
+                                }
+                                break;
+                            case "0": // go back to ledger screen
+                                onReports = false;
+                                break;
                         }
                     }
 
@@ -195,7 +270,7 @@ public class BankAccountLedgerApp {
                     onLedger = false;
                     break;
                 }
-            }
+            } bufReader.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
