@@ -100,7 +100,8 @@ public class BankAccountLedgerApp {
             System.out.println("To make deposit please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20) ");
             String input = scan.nextLine();
             String[] inputLine = input.split(",");
-            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + inputLine[2] + "\n");
+            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
+
             bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -119,7 +120,7 @@ public class BankAccountLedgerApp {
             System.out.println("To make payment please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20.00) ");
             String input = scan.nextLine();
             String[] inputLine = input.split(",");
-            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + "-" + inputLine[2] + "\n");
+            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + "-" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
             bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
