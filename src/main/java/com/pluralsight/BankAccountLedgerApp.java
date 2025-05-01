@@ -1,12 +1,15 @@
 package com.pluralsight;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BankAccountLedgerApp {
@@ -118,11 +121,26 @@ public class BankAccountLedgerApp {
         }
     }
     static void ledgerView() {
-        try {
-            boolean onLedger = true;
+        try {//reads lines from file
+            FileReader fileReader = new FileReader("src/main/resources/transacpract.csv");
+            BufferedReader bufReader = new BufferedReader(fileReader);
+            //reads and throws away first line of file which is the header
+            bufReader.readLine();
+
+            //reads all file lines and adds them to list
+            ArrayList<Transaction> entryList = new ArrayList<Transaction>();
+            String input;
+            while((input = bufReader.readLine()) != null) {
+                String[] transacParts = input.split("\\|");
+                Transaction newTransac = new Transaction(LocalDate.parse(transacParts[0]), LocalTime.parse(transacParts[1]), transacParts[2],
+                        transacParts[3], Double.parseDouble(transacParts[4]));
+                entryList.add(newTransac);
+            }
+
             //loops through ledger options
+            boolean onLedger = true;
             while(onLedger) {
-                System.out.println("Welcome to the Ace Accounting Ledger where you can view accounts entries based on criteria. \n" +
+                System.out.println("Welcome to the Ace Accounting Ledger where you can view account entries based on criteria. \n" +
                         "A) All \n" +
                         "D) Deposits \n" +
                         "P) Payments \n" +
@@ -130,9 +148,20 @@ public class BankAccountLedgerApp {
                         "H) Home");
                 String ledgerChoice = scan.nextLine();
                 if(ledgerChoice.equalsIgnoreCase("a")) {
+                    //loops through list in reverse
+                    for(int i = entryList.size() - 1; i >= 0; i--) {
+                        Transaction t = entryList.get(i);
+                        System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                    }
 
                 } else if(ledgerChoice.equalsIgnoreCase("d")) {
-
+                    for(int i = entryList.size() - 1; i >= 0; i--) {
+                        Transaction t = entryList.get(i);
+                        // makes sure number is greater than zero
+                        if(t.getAmount() > 0) {
+                            System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                        }
+                    }
                 } else if(ledgerChoice.equalsIgnoreCase("p")) {
 
                 } else if(ledgerChoice.equalsIgnoreCase("r")) {
