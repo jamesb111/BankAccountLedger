@@ -180,16 +180,6 @@ public class BankAccountLedgerApp {
                     //get current time
                     LocalDate current = LocalDate.now();
 
-                    //get first of month
-                    LocalDate firstOfMonth = current.withDayOfMonth(1);
-
-                    // year month class to use atEndOfMonth method in loop later to get previous month last day
-                    YearMonth monthForMethod = YearMonth.of(firstOfMonth.getYear(), firstOfMonth.getMonth());
-
-                    //Temporal adjusters that will get first day of year and last day of year
-                    LocalDate firstDayOfYear = current.with(TemporalAdjusters.firstDayOfYear());
-                    LocalDate lastDayOfYear = current.with(TemporalAdjusters.lastDayOfYear());
-
                     //loops through report options
                     boolean onReports = true;
                     label:
@@ -207,8 +197,8 @@ public class BankAccountLedgerApp {
                                 System.out.println("Month to date--------------------------");
                                 for (int i = entryList.size() - 1; i >= 0; i--) {
                                     Transaction t = entryList.get(i);
-                                    //boolean that checks if entry is within first day of month till current time
-                                    boolean monthToDate = (t.getDate().isAfter(firstOfMonth) || t.getDate().isEqual(firstOfMonth))  && (t.getDate().isBefore(LocalDate.now()) || t.getDate().isEqual(LocalDate.now()) );
+                                    //boolean that checks if entry is within the same month as the current month
+                                    boolean monthToDate = t.getDate().getMonth().equals(LocalDate.now().getMonth());
                                     if (monthToDate) {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
@@ -218,8 +208,8 @@ public class BankAccountLedgerApp {
                                 System.out.println("Previous month--------------------------");
                                 for (int i = entryList.size() - 1; i >= 0; i--) {
                                     Transaction t = entryList.get(i);
-                                    //boolean that checks if entry is within first and last day of previous month
-                                    boolean previousMonth = (t.getDate().isAfter(firstOfMonth.minusMonths(1)) || t.getDate().isEqual(firstOfMonth.minusMonths(1))) && (t.getDate().isBefore(monthForMethod.atEndOfMonth().minusMonths(1) ) || t.getDate().isEqual(monthForMethod.atEndOfMonth().minusMonths(1)));
+                                    //boolean that checks if entry's month is within the previous month
+                                    boolean previousMonth = t.getDate().getMonth().equals(current.getMonth().minus(1)) && (t.getDate().getYear() == LocalDate.now().getYear());
                                     if (previousMonth) {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
@@ -229,20 +219,20 @@ public class BankAccountLedgerApp {
                                 System.out.println("Year to date--------------------------");
                                 for (int i = entryList.size() - 1; i >= 0; i--) {
                                     Transaction t = entryList.get(i);
-                                    // boolean checks if entry is within year to current time
-                                    boolean yearToDate = (t.getDate().isAfter(firstDayOfYear) || t.getDate().isEqual(firstDayOfYear)) && (t.getDate().isBefore(LocalDate.now()) || t.getDate().isEqual(LocalDate.now()));
+                                    // boolean checks if entry is within year of current date
+                                    boolean yearToDate = t.getDate().getYear() == LocalDate.now().getYear();
                                     if (yearToDate) {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
                                 break;
                             case "4": //previous year
-                                System.out.println("Previous month--------------------------");
+                                System.out.println("Previous Year--------------------------");
                                 for (int i = entryList.size() - 1; i >= 0; i--) {
                                     Transaction t = entryList.get(i);
-                                    // boolean that checks if entry is within first and last day of previous year
-                                    boolean previousYear = (t.getDate().isAfter(firstDayOfYear.minusYears(1)) || t.getDate().isEqual(firstDayOfYear.minusYears(1)))&& (t.getDate().isBefore(lastDayOfYear.minusYears(1)) || t.getDate().isEqual(lastDayOfYear.minusYears(1)));
-                                    if (t.getAmount() < 0) {
+                                    // boolean that checks if entry's year  is within year of previous year
+                                    boolean previousYear = t.getDate().getYear() == LocalDate.now().getYear() - 1;
+                                    if (previousYear) {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
