@@ -104,7 +104,7 @@ public class BankAccountLedgerApp {
             System.out.println("Add deposit---------------------------");
             System.out.print("Enter description: ");
             String description = scan.nextLine();
-            System.out.print("Enter vender: ");
+            System.out.print("Enter vendor: ");
             String vendor = scan.nextLine();
             System.out.print("Enter amount: ");
             double amount = scan.nextDouble();
@@ -130,7 +130,7 @@ public class BankAccountLedgerApp {
             System.out.println("Add Payment/Expense-----------------------");
             System.out.print("Enter description: ");
             String description = scan.nextLine();
-            System.out.print("Enter vender: ");
+            System.out.print("Enter vendor: ");
             String vendor = scan.nextLine();
             System.out.print("Enter amount: ");
             double amount = scan.nextDouble();
@@ -179,6 +179,7 @@ public class BankAccountLedgerApp {
                     //loops through list in reverse
                     for(int i = entryList.size() - 1; i >= 0; i--) {
                         Transaction t = entryList.get(i);
+
                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                     }
                     System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
@@ -214,7 +215,7 @@ public class BankAccountLedgerApp {
 
                     //loops through report options
                     boolean onReports = true;
-                    label:
+
                     while(onReports) {
                         System.out.println("─────────────────────────────────────────Reports Page─────────────────────────────────────────────");
                         System.out.println("Report page. Click one of the numbers to select one of our options. \n" +
