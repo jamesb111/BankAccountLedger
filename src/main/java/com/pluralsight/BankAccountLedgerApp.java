@@ -1,7 +1,5 @@
 package com.pluralsight;
 
-import com.pluralsight.Transaction;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -10,9 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,9 +17,8 @@ public class BankAccountLedgerApp {
     static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
-        //scans user inputs
-
-        System.out.println("Would you like to launch the Ace Accounting App? (Y/N)");
+        // Asks if user wants to start app and takes answer as input
+        System.out.println("Would you like to launch the Town Bank App? (Y/N)");
         String userStartApp = scan.nextLine();
 
         //Checks if user wants to start app or not
@@ -36,25 +31,26 @@ public class BankAccountLedgerApp {
             //boolean that will run loop
             boolean appRunning = true;
 
-            boolean fileExists = Files.exists(Path.of("src/main/resources/transacpract.csv"));
+            // check if file exists if not will create and write to file
+            boolean fileExists = Files.exists(Path.of("src/main/resources/transactions.csv"));
 
-            //writes the header for the file
             if(!fileExists) {
                 //file writer to write to file
-                FileWriter writer = new FileWriter("src/main/resources/transacpract.csv", true);
+                FileWriter writer = new FileWriter("src/main/resources/transactions.csv", true);
                 BufferedWriter bufWriter = new BufferedWriter(writer);
 
-                //Dummy data used to ensure all features are working properly
+                //writes the header for the file
                 bufWriter.write("date|time|description|vendor|amount \n");
-                bufWriter.write("2024-08-20|14:35:20|Bought textbooks|University Store|-210.80 \n");
-                bufWriter.write("2024-09-10|10:10:10|Part-time Salary|Coffee Shop|700.00 \n");
+                //Dummy data used to ensure all features are working properly
+                bufWriter.write("2024-08-20|14:35:20|Bought textbooks|University of Michigan|-210.80 \n");
+                bufWriter.write("2024-09-10|10:10:10|Part-time Salary|Starbucks|700.00 \n");
                 bufWriter.write("2024-10-22|18:20:40|Car Repair|AutoFix Center|-340.90 \n");
                 bufWriter.write("2024-11-05|19:50:50|Sold Bicycle|Facebook Marketplace|180.00 \n");
                 bufWriter.write("2024-12-24|08:30:30|Holiday Gift Shopping|Amazon|-215.67 \n");
-                bufWriter.write("2025-01-10|13:13:13|New Year Bonus|Company XYZ|500.00 \n");
-                bufWriter.write("2025-02-14|20:00:00|Valentine's Dinner|Fancy Steakhouse|-150.00 \n");
+                bufWriter.write("2025-01-10|13:13:13|New Year Bonus|Dunder Mifflin|500.00 \n");
+                bufWriter.write("2025-02-14|20:00:00|Valentine's Dinner|Outback Steakhouse|-150.00 \n");
                 bufWriter.write("2025-03-01|07:50:00|Monthly Subscription|Spotify|-9.99 \n");
-                bufWriter.write("2025-03-25|12:12:12|Sold Artwork|Local Gallery|350.00 \n");
+                bufWriter.write("2025-03-25|12:12:12|Sold Artwork|Blue Art Gallery|350.00 \n");
                 bufWriter.write("2025-04-28|15:16:35|Bought sandwich|Walmart|-10.00 \n");
 
                 bufWriter.close();
@@ -63,11 +59,17 @@ public class BankAccountLedgerApp {
 
             //loops through home screen options
             while(appRunning) {
+                System.out.println("─────────────────────────────────────Town Bank Accounting Home───────────────────────────────────");
                 System.out.println("Welcome to the Ace Account Home Screen! Select a letter from our list of options \n" +
                         "D) Add Deposit \n" +
-                        "P) Make Payment (Debit) \n" +
+                        "P) Make Payment \n" +
                         "L) Ledger \n" +
                         "X) Exit");
+                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                System.out.println();
+                System.out.print("Enter option here: ");
+
+
                 String userChoice = scan.nextLine();
                 //checks which options chosen and calls a method or ends loop based on it
                 if(userChoice.equalsIgnoreCase("d")) {
@@ -93,15 +95,20 @@ public class BankAccountLedgerApp {
             LocalDate date = LocalDate.now();
             LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
             //file writer to write to file
-            FileWriter writer = new FileWriter("src/main/resources/transacpract.csv" , true);
+            FileWriter writer = new FileWriter("src/main/resources/transactions.csv" , true);
             BufferedWriter bufWriter = new BufferedWriter(writer);
 
-            //gets user input and splits it to add it to the file
-            System.out.println("To make deposit please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20) ");
-            String input = scan.nextLine();
-            String[] inputLine = input.split(",");
-            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
+            //saves input in variables
+            System.out.print("Enter description: ");
+            String description = scan.nextLine();
+            System.out.print("Enter vender: ");
+            String vendor = scan.nextLine();
+            System.out.print("Enter amount: ");
+            double amount = scan.nextDouble();
+            scan.nextLine();
 
+
+            bufWriter.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount + "\n");
             bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -113,14 +120,19 @@ public class BankAccountLedgerApp {
             LocalDate date = LocalDate.now();
             LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
             //file writer to write to file
-            FileWriter writer = new FileWriter("src/main/resources/transacpract.csv", true);
+            FileWriter writer = new FileWriter("src/main/resources/transactions.csv", true);
             BufferedWriter bufWriter = new BufferedWriter(writer);
 
-            //gets user input and splits it to add it to the file
-            System.out.println("To make payment please enter the description, the vendor, and the amount separated by commas. ex:(pay bill,Amazon,20.00) ");
-            String input = scan.nextLine();
-            String[] inputLine = input.split(",");
-            bufWriter.write(date + "|" + time + "|" + inputLine[0] + "|" + inputLine[1] + "|" + "-" + String.format("%.2f", Double.parseDouble(inputLine[2])) + "\n");
+            //saves input in variables
+            System.out.print("Enter description: ");
+            String description = scan.nextLine();
+            System.out.print("Enter vender: ");
+            String vendor = scan.nextLine();
+            System.out.print("Enter amount: ");
+            double amount = scan.nextDouble();
+            scan.nextLine();
+
+            bufWriter.write(date + "|" + time + "|" + description + "|" + vendor + "|" + "-" + amount + "\n");
             bufWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -129,7 +141,7 @@ public class BankAccountLedgerApp {
     static void ledgerView() {
         try {
             //reads lines from file
-            FileReader fileReader = new FileReader("src/main/resources/transacpract.csv");
+            FileReader fileReader = new FileReader("src/main/resources/transactions.csv");
             BufferedReader bufReader = new BufferedReader(fileReader);
             //reads and throws away first line of file which is the header
             bufReader.readLine();
@@ -147,21 +159,29 @@ public class BankAccountLedgerApp {
             //loops through ledger options
             boolean onLedger = true;
             while(onLedger) {
+                System.out.println("─────────────────────────────────────────Ledger View──────────────────────────────────────────");
                 System.out.println("Welcome to the Ace Accounting Ledger where you can view account entries based on criteria. \n" +
                         "A) All \n" +
                         "D) Deposits \n" +
                         "P) Payments \n" +
                         "R) Reports \n" +
                         "H) Home");
+                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                System.out.print("Enter Option here:");
+
                 String ledgerChoice = scan.nextLine();
                 if(ledgerChoice.equalsIgnoreCase("a")) {
+                    System.out.println("All ledger entries-------------------------------------------------");
                     //loops through list in reverse
                     for(int i = entryList.size() - 1; i >= 0; i--) {
                         Transaction t = entryList.get(i);
                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                     }
+                    System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                    System.out.println();
 
                 } else if(ledgerChoice.equalsIgnoreCase("d")) {
+                    System.out.println("Deposit ledger entries-------------------------------------------------");
                     for(int i = entryList.size() - 1; i >= 0; i--) {
                         Transaction t = entryList.get(i);
                         // makes sure number is greater than zero
@@ -169,7 +189,11 @@ public class BankAccountLedgerApp {
                             System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                         }
                     }
+                    System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                    System.out.println();
+
                 } else if(ledgerChoice.equalsIgnoreCase("p")) {
+                    System.out.println("Payment ledger entries-------------------------------------------------");
                     for(int i = entryList.size() - 1; i >= 0; i--) {
                         Transaction t = entryList.get(i);
                         // makes sure number is less than zero
@@ -177,6 +201,9 @@ public class BankAccountLedgerApp {
                             System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                         }
                     }
+                    System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                    System.out.println();
+
                 } else if(ledgerChoice.equalsIgnoreCase("r")) {
                     //get current time
                     LocalDate current = LocalDate.now();
@@ -185,6 +212,7 @@ public class BankAccountLedgerApp {
                     boolean onReports = true;
                     label:
                     while(onReports) {
+                        System.out.println("─────────────────────────────────────────Reports Page─────────────────────────────────────────────");
                         System.out.println("Report page. Click one of the numbers to select one of our options. \n" +
                                 "1) Month To Date \n" +
                                 "2) Previous Month \n" +
@@ -192,7 +220,12 @@ public class BankAccountLedgerApp {
                                 "4) Previous Year \n" +
                                 "5) Search by Vendor \n" +
                                 "0) Back");
+                        System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                        System.out.println();
+
+                        System.out.print("Enter Choice here: ");
                         String reportsChoice = scan.nextLine();
+                        //Switch statement that'll run a reverse loop printing out lines from file that meet criteria
                         switch (reportsChoice) {
                             case "1": //month to date
                                 System.out.println("Month to date--------------------------");
@@ -204,6 +237,8 @@ public class BankAccountLedgerApp {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
+                                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                                System.out.println();
                                 break;
                             case "2": // previous month
                                 System.out.println("Previous month--------------------------");
@@ -215,6 +250,8 @@ public class BankAccountLedgerApp {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
+                                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                                System.out.println();
                                 break;
                             case "3": //year to date
                                 System.out.println("Year to date--------------------------");
@@ -226,6 +263,8 @@ public class BankAccountLedgerApp {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
+                                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                                System.out.println();
                                 break;
                             case "4": //previous year
                                 System.out.println("Previous Year--------------------------");
@@ -237,6 +276,8 @@ public class BankAccountLedgerApp {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
+                                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                                System.out.println();
                                 break;
                             case "5": //search by vendor
                                 System.out.println("Search by Vendor--------------------------");
@@ -250,6 +291,8 @@ public class BankAccountLedgerApp {
                                         System.out.printf("%tF | %tT | %s | %s | %.2f \n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                                     }
                                 }
+                                System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
+                                System.out.println();
                                 break;
                             case "0": // go back to ledger screen
                                 onReports = false;
