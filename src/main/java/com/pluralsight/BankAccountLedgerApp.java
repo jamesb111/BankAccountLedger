@@ -51,6 +51,8 @@ public class BankAccountLedgerApp {
                 bufWriter.write("2025-02-14|20:00:00|Valentine's Dinner|Outback Steakhouse|-150.00 \n");
                 bufWriter.write("2025-03-01|07:50:00|Monthly Subscription|Spotify|-9.99 \n");
                 bufWriter.write("2025-03-25|12:12:12|Sold Artwork|Blue Art Gallery|350.00 \n");
+                bufWriter.write("2025-04-08|11:13:35|Bought Latte|Starbucks|-9.00 \n");
+                bufWriter.write("2025-04-20|18:26:45|Monthly subscription|Netflix|-15.00 \n");
                 bufWriter.write("2025-04-28|15:16:35|Bought sandwich|Walmart|-10.00 \n");
 
                 bufWriter.close();
@@ -99,6 +101,7 @@ public class BankAccountLedgerApp {
             BufferedWriter bufWriter = new BufferedWriter(writer);
 
             //saves input in variables
+            System.out.println("Add deposit---------------------------");
             System.out.print("Enter description: ");
             String description = scan.nextLine();
             System.out.print("Enter vender: ");
@@ -124,6 +127,7 @@ public class BankAccountLedgerApp {
             BufferedWriter bufWriter = new BufferedWriter(writer);
 
             //saves input in variables
+            System.out.println("Add Payment/Expense-----------------------");
             System.out.print("Enter description: ");
             String description = scan.nextLine();
             System.out.print("Enter vender: ");
@@ -161,9 +165,9 @@ public class BankAccountLedgerApp {
             while(onLedger) {
                 System.out.println("─────────────────────────────────────────Ledger View──────────────────────────────────────────");
                 System.out.println("Welcome to the Ace Accounting Ledger where you can view account entries based on criteria. \n" +
-                        "A) All \n" +
+                        "A) All Transactions \n" +
                         "D) Deposits \n" +
-                        "P) Payments \n" +
+                        "P) Payments/Expenses \n" +
                         "R) Reports \n" +
                         "H) Home");
                 System.out.println("───────────────────────────────────────────────────────────────────────────────────────────────");
