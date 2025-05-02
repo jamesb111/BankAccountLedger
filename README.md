@@ -47,7 +47,7 @@ Welcome to the **Town Bank App** - A bank account ledger written in Java. This a
 
 ## 💻 Interesting piece of code
 
-1. I find this code interessting due to it's usefulness. It reads each line from my csv file creating a new Transaction object that'll get added to a Transaction arrayList. I can then loop through this Transaction list and access the properties of the object for conditional logic that asists in being able to print out specfic transactions based on criteria. 
+1. I find this code interessting due to it's usefulness. It reads each line from my csv file creating a new Transaction object that'll get added to a Transaction arrayList. I can then loop through this Transaction list and access the properties of the object for conditional logic that prints out specfic transactions based on criteria. 
    ```java
    //reads all file lines and adds them to list
             ArrayList<Transaction> entryList = new ArrayList<>();
